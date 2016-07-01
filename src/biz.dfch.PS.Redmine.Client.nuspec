@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>biz.dfch.PS.Redmine.Client</id>
+        <version>1.0.0</version>
+        <title>biz.dfch.PS.Redmine.Client</title>
+        <authors>d-fens GmbH</authors>
+        <owners>d-fens GmbH</owners>
+		<licenseUrl>https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client.git</projectUrl>
+        <iconUrl>https://raw.githubusercontent.com/dfensgmbh/biz.dfch.PS.Redmine.Client/master/logo-32x32.png</iconUrl>
+        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <description>biz.dfch.PS.Redmine.Client
+========================
+
+PowerShell module for Redmine Project Management
+
+d-fens GmbH, General-Guisan-Strasse 6, CH-6300 Zug, Switzerland
+
+## Download
+
+* Get it on [NuGet](https://www.nuget.org/packages/biz.dfch.PS.Redmine.Client/)
+
+* See [Releases](https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client/releases) and [Tags](https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client/tags) on [GitHub](https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client)
+		</description>
+        <summary>PowerShell module for Redmine Project Management</summary>
+        <releaseNotes>20160701
+* Initial release
+</releaseNotes>
+        <copyright>Copyright © 2016 d-fens GmbH</copyright>
+        <tags>dfch PowerShell Redmine Client</tags>
+        <dependencies>
+			<dependency id="biz.dfch.PS.System.Logging" version="1.3.1" />
+			<dependency id="biz.dfch.PS.System.Utilities" version="1.1.0" />
+        </dependencies>
+    </metadata>
+	<files>
+		<file src="Install.ps1" target="Install.ps1" />
+		<file src="..\LICENSE" target="tools\LICENSE" />
+		<file src="..\NOTICE" target="tools\NOTICE" />
+		<file src="..\README.md" target="tools\README.md" />
+		<file src="biz.dfch.PS.Redmine.Client.psm1" target="tools\biz.dfch.PS.Redmine.Client.psm1" />
+		<file src="biz.dfch.PS.Redmine.Client.psd1" target="tools\biz.dfch.PS.Redmine.Client.psd1" />
+		<file src="biz.dfch.PS.Redmine.Client.xml" target="tools\biz.dfch.PS.Redmine.Client.xml" />
+		<file src="Enter-Server.ps1" target="tools\Enter-Server.ps1" />
+		<file src="Import-Module.ps1" target="tools\Import-Module.ps1" />
+		<file src="..\packages\biz.dfch.CS.Redmine.Client.1.0.1\lib\biz.dfch.CS.Redmine.Client.dll" target="tools\biz.dfch.CS.Redmine.Client.dll" />
+	</files>
+</package>
