@@ -1,74 +1,76 @@
-$fn = $MyInvocation.MyCommand.Name;
+$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
 
-trap { Log-Exception $_; break; }
-
-Set-Variable gotoSuccess -Option 'Constant' -Value 'biz.dfch.System.Exception.gotoSuccess';
-Set-Variable gotoError -Option 'Constant' -Value 'biz.dfch.System.Exception.gotoError';
-Set-Variable gotoFailure -Option 'Constant' -Value 'biz.dfch.System.Exception.gotoFailure';
-Set-Variable gotoNotFound -Option 'Constant' -Value 'biz.dfch.System.Exception.gotoNotFound';
-
-[string] $ModuleConfigFile = '{0}.xml' -f (Get-Item $PSCommandPath).BaseName;
-[string] $ModuleConfigurationPathAndFile = Join-Path -Path $PSScriptRoot -ChildPath $ModuleConfigFile;
-$mvar = $ModuleConfigFile.Replace('.xml', '').Replace('.', '_');
-if($true -eq (Test-Path -Path $ModuleConfigurationPathAndFile)) 
+function Stop-Pester($message = "EMERGENCY: Script cannot continue.")
 {
-	if($true -ne (Test-Path variable:$($mvar))) 
-	{
-		Log-Debug $fn ("Loading module configuration file from: '{0}' ..." -f $ModuleConfigurationPathAndFile);
-		Set-Variable -Name $mvar -Value (Import-Clixml -Path $ModuleConfigurationPathAndFile);
-	}
+	$msg = $message;
+	$e = New-CustomErrorRecord -msg $msg -cat OperationStopped -o $msg;
+	$PSCmdlet.ThrowTerminatingError($e);
 }
 
-if($true -ne (Test-Path variable:$($mvar))) 
-{
-	Write-Error "Could not find module configuration file '$ModuleConfigFile' in 'ENV:PSModulePath'.`nAborting module import...";
-	# Aborts loading module.
-	break;
-}
+Describe -Tags "Enter-Server.Tests" "Enter-Server.Tests" {
 
-Export-ModuleMember -Variable $mvar;
+	Mock Export-ModuleMember { return $null; }
 
-[string] $ManifestFile = '{0}.psd1' -f (Get-Item $PSCommandPath).BaseName;
-$ManifestPathAndFile = Join-Path -Path $PSScriptRoot -ChildPath $ManifestFile;
-if(Test-Path -Path $ManifestPathAndFile)
-{
-	$Manifest = (Get-Content -raw $ManifestPathAndFile) | iex;
-	foreach( $ScriptToProcess in $Manifest.ScriptsToProcess) 
-	{ 
-		$ModuleToRemove = (Get-Item (Join-Path -Path $PSScriptRoot -ChildPath $ScriptToProcess)).BaseName;
-		if(Get-Module $ModuleToRemove)
-		{ 
-			Remove-Module $ModuleToRemove -ErrorAction:SilentlyContinue;
+	Context "Enter-Server-Succeeds" {
+	
+		# Context wide constants
+		
+		BeforeEach {
+			# N/A
+		}
+
+		It "Warmup" -Test {
+			1 | Should Be 1;
+		}
+	
+		It "Sut-Exists" -Test {
+		
+			Test-Path -Path $sut | Should Be $true;
+		}
+		
+		It "Enter-Server-WithApiKey-Succeeds" -Test {
+		
+			[Uri] $ServerBaseUri = 'https://rhel7-t6-01.tenant6.local'
+			[string] $BaseUrl = "/"
+
+			$username = "arbitrary-username";
+			$password = "arbitrary-password" | ConvertTo-SecureString -AsPlainText -Force;
+			$Credential = New-Object System.Management.Automation.PSCredential($username, $password);
+
+			$TotalAttempts = 2
+			$BaseRetryIntervallMilliseconds = 50
+			
+			$result = Enter-Server $ServerBaseUri $BaseUrl -Credential $Credential -TotalAttempts $TotalAttempts -BaseRetryIntervallMilliseconds $BaseRetryIntervallMilliseconds;
+			
+			$result | Should Not Be $null;
+			$client -is [biz.dfch.CS.Redmine.Client.RedmineClient] | Should Be $true;
 		}
 	}
+
 }
 
-(Get-Variable -Name $mvar).Value.Credential = [System.Net.CredentialCache]::DefaultCredentials;
-
-Contract-Requires ((Get-Module biz.dfch.PS.System.Logging).Version -ge ([Version] '1.3.1'))
-Contract-Requires ((Get-Module biz.dfch.PS.System.Utilities).Version -ge ([Version] '1.1.0'))
-
-# 
+#
 # Copyright 2016 d-fens GmbH
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 # http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 
 # SIG # Begin signature block
 # MIIXDwYJKoZIhvcNAQcCoIIXADCCFvwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU3i5hg20RpKQITZWbw3fZoIkw
-# N1igghHCMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUFfcCQjf4Pvmjgl6BGVFTco/3
+# olCgghHCMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
 # VzELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNV
 # BAsTB1Jvb3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw0xMTA0
 # MTMxMDAwMDBaFw0yODAxMjgxMjAwMDBaMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
@@ -167,26 +169,26 @@ Contract-Requires ((Get-Module biz.dfch.PS.System.Utilities).Version -ge ([Versi
 # MDAuBgNVBAMTJ0dsb2JhbFNpZ24gQ29kZVNpZ25pbmcgQ0EgLSBTSEEyNTYgLSBH
 # MgISESENFrJbjBGW0/5XyYYR5rrZMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEM
 # MQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQB
-# gjcCAQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBTGhFLAy91vAx14
-# QbkRiw7cterIEDANBgkqhkiG9w0BAQEFAASCAQC8ssOENFt2tXPMN7hUhEijKWG7
-# mYxDd7Iorp4EzcrhqPXbE38QgWysLbMbzDsFZZt1eRQ/5Q+XgiFl6Cb64IHhpBjl
-# Yzdl5NMdWfaUlLbcVyciQYQenpWfuu2y0ZXqRZ/hu+vxIfba0DViebrzi2CIux7l
-# ea1bH+X2BTKuE5hdCyAwSba3sKWE6FteCtMWaziv03WbDWPp7lw8cBM7K4+LzNr+
-# dvsdCHZEz3r5ZZqpklpxybeXgce/+33y/5puBFQboPpvJxSpeocDaGn1zjqIebH2
-# wEQJDDAoE71SC8pdXBOato4yD7RIWUa0w6WR/n4m9AtRzbZrZ9PZLtLhOg0HoYIC
+# gjcCAQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBSF589Agn4jjNvv
+# Uxlph0bUPU2wNDANBgkqhkiG9w0BAQEFAASCAQDAbuIAPC6lFOe63GSBlPlIr2dn
+# VYr8JCJtWnLOaOHqaswMx4h6znvez0ZCGPBpO3Gn1+lD06ksVWCSODGMbEDGq6uW
+# cDJGJpcvbAYYKfDr0JlJ6dQWGtR4EmdJf0jcEaTorK/WZiDJb7lIzTK2JsxPqTR7
+# zdiCDRhjHCuuzs+BxM4FqezVYOaDjHFjfwLqm9OULUvq7QDWE4VKBMBFP8rAAcz7
+# q2tNm/GMY8Sgygs9iK/RZdgn9bomlaM1HGknLCiktqj1LKA5BfhiQUw6h2N3ZhMW
+# E8NtZciCeXfkTa4N7Ds2Z9F0tAiwPO/nxdhViGjaSXVqwB1qu83gDHkgPSAzoYIC
 # ojCCAp4GCSqGSIb3DQEJBjGCAo8wggKLAgEBMGgwUjELMAkGA1UEBhMCQkUxGTAX
 # BgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gVGlt
 # ZXN0YW1waW5nIENBIC0gRzICEhEhBqCB0z/YeuWCTMFrUglOAzAJBgUrDgMCGgUA
 # oIH9MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE2
-# MDcwMjE5MzUxNFowIwYJKoZIhvcNAQkEMRYEFEbfsnAqTWP1SMtES2ECav9aogO+
+# MDcwMjE5MTYwMFowIwYJKoZIhvcNAQkEMRYEFHiQnqyaTOUnlDrcWXYCZWTrYoDI
 # MIGdBgsqhkiG9w0BCRACDDGBjTCBijCBhzCBhAQUs2MItNTN7U/PvWa5Vfrjv7Es
 # KeYwbDBWpFQwUjELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYt
 # c2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gVGltZXN0YW1waW5nIENBIC0gRzICEhEh
-# BqCB0z/YeuWCTMFrUglOAzANBgkqhkiG9w0BAQEFAASCAQA8b0kWkZMBF98y0taD
-# oZnMVQQY1HcFAOIh757PKWgu1CJC+ZN+iJoI/maY8s9xGdopz/WWq09kP//JkkKL
-# tew8nyUEOVM3qWVdGO8Zz6gjGO7Ui8bwBefvRh9lbONFfDaJxIe4aqh2zKjhomcu
-# rBjl3yvihudZwYNRWz22GeE9F4B3f/SgIzo/pbYzaxP95AApZggtXfm3aMhP3cD1
-# WlHUft9PHBgVRnimxJhV+G4UhTFJf/76uiQ05Xzw7NOfOW18GCQO3uJp2jwKuj+z
-# u6a7GG4Q4PgwjVmNqLi2xAgclnnPgAG9QhUbPJVYKdoS5fDxBD9kx2KV05ytEpfE
-# qD3s
+# BqCB0z/YeuWCTMFrUglOAzANBgkqhkiG9w0BAQEFAASCAQAZs8I0bg1Kus0EHRgG
+# 4MeSStbJyigpJJ1peIVJazIvFtfMAzS2c6zzDYzLT6VRifPsfQPEECBv+ezVoylt
+# s72h7EcFxoaMzRwMPQ6s5Cb57SwFa7451og2FKu59NEZONlvBK8TCjfCmyQMRoNv
+# 8ttPFiG2qMp4SUjfyXJB3CffLN3y3kvqLMY8qERvR4R30AUoE28N5tGDxAaMSBDZ
+# adwpH4vLXHp89Uyw0E2DesCGcI3VSrQ5vinzdvSb9HZErUc3oSqUmnKYKZ4rMq7W
+# cFDTD0KAaLkTmOOzytJKIv+RkxnBmmPajO5C3V7dSaHDbhhmlM0o2kY89DL9el0B
+# kHpB
 # SIG # End signature block

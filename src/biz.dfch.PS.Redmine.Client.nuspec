@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>biz.dfch.PS.Redmine.Client</id>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <title>biz.dfch.PS.Redmine.Client</title>
         <authors>d-fens GmbH</authors>
         <owners>d-fens GmbH</owners>
@@ -24,7 +24,7 @@ d-fens GmbH, General-Guisan-Strasse 6, CH-6300 Zug, Switzerland
 * See [Releases](https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client/releases) and [Tags](https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client/tags) on [GitHub](https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client)
 		</description>
         <summary>PowerShell module for Redmine Project Management</summary>
-        <releaseNotes>20160701
+        <releaseNotes>20160702
 * Initial release
 </releaseNotes>
         <copyright>Copyright © 2016 d-fens GmbH</copyright>
@@ -45,5 +45,12 @@ d-fens GmbH, General-Guisan-Strasse 6, CH-6300 Zug, Switzerland
 		<file src="Enter-Server.ps1" target="tools\Enter-Server.ps1" />
 		<file src="Import-Module.ps1" target="tools\Import-Module.ps1" />
 		<file src="..\packages\biz.dfch.CS.Redmine.Client.1.0.1\lib\biz.dfch.CS.Redmine.Client.dll" target="tools\biz.dfch.CS.Redmine.Client.dll" />
+		<file src="..\packages\redmine-api.1.0.4\lib\net451\redmine-net451-api.dll" target="tools\redmine-net451-api.dll" />
+		<file src="..\packages\redmine-api.1.0.4\lib\net451\redmine-net451-api.xml" target="tools\redmine-net451-api.xml" />
+		<file src="..\packages\biz.dfch.CS.System.Utilities.2.0.0\lib\biz.dfch.CS.System.Utilities.dll" target="tools\biz.dfch.CS.System.Utilities.dll" />
+		<file src="..\packages\log4net.2.0.3\lib\net40-full\log4net.dll" target="tools\log4net.dll" />
+		<file src="..\packages\log4net.2.0.3\lib\net40-full\log4net.xml" target="tools\log4net.xml" />
+		<file src="..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll" target="tools\Newtonsoft.Json.dll" />
+		<file src="..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.xml" target="tools\Newtonsoft.Json.xml" />
 	</files>
 </package>
