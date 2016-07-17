@@ -8,7 +8,7 @@
 RootModule = 'biz.dfch.PS.Redmine.Client.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.1.20160717'
+ModuleVersion = '2.0.2.20160717'
 
 # ID used to uniquely identify this module
 GUID = 'bdcc3303-6c3d-4b99-a5ff-9f68967aadd1'
@@ -54,7 +54,7 @@ RequiredModules = @(
 RequiredAssemblies = @(
 	'biz.dfch.CS.Redmine.Client.dll'
 	,
-	'redmine-net45-api.dll'
+	'redmine-net451-api.dll'
 	,
 	'biz.dfch.CS.System.Utilities.dll'
 	,
