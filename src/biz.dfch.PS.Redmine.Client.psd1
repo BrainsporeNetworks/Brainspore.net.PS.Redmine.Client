@@ -8,7 +8,7 @@
 RootModule = 'biz.dfch.PS.Redmine.Client.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.2.20160702'
+ModuleVersion = '2.0.1.20160717'
 
 # ID used to uniquely identify this module
 GUID = 'bdcc3303-6c3d-4b99-a5ff-9f68967aadd1'
