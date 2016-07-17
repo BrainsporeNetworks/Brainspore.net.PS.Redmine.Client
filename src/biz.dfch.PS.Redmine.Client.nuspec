@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>biz.dfch.PS.Redmine.Client</id>
-        <version>2.0.0</version>
+        <version>2.0.1</version>
         <title>biz.dfch.PS.Redmine.Client</title>
         <authors>d-fens GmbH</authors>
         <owners>d-fens GmbH</owners>
@@ -24,7 +24,7 @@ d-fens GmbH, General-Guisan-Strasse 6, CH-6300 Zug, Switzerland
 * See [Releases](https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client/releases) and [Tags](https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client/tags) on [GitHub](https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client)
 		</description>
         <summary>PowerShell module for Redmine Project Management</summary>
-        <releaseNotes>20160713
+        <releaseNotes>20160717
 Features
 
 * updated redmine-net-api library to 4.5.1 (instead of 4.5) after upgrade of biz.dfch.CS.Redmine.Client to .NET 4.6 (from 4.5)
