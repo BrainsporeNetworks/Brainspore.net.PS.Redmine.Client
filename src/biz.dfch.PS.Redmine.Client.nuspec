@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>biz.dfch.PS.Redmine.Client</id>
-        <version>2.0.1</version>
+        <version>2.0.2</version>
         <title>biz.dfch.PS.Redmine.Client</title>
         <authors>d-fens GmbH</authors>
         <owners>d-fens GmbH</owners>
@@ -28,9 +28,14 @@ d-fens GmbH, General-Guisan-Strasse 6, CH-6300 Zug, Switzerland
 Features
 
 * updated redmine-net-api library to 4.5.1 (instead of 4.5) after upgrade of biz.dfch.CS.Redmine.Client to .NET 4.6 (from 4.5)
+	* this is a breaking change as the namespace in redmine 4.5.1 changed (especially `Exceptions`)
 * to fix an SSL security issue in the redmine-api.1.0.4 this module uses an updated biz.dfch.CS.Redmine.Client library that works around this issue
 	* therefore we have a breaking change (from a SemVer perspective)
 	* now the SecurityProtocol can be set by [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12 from PowerShell
+
+Bugfixes
+
+* added missing reference to redmine 4.5.1 assembly in PSD1
 </releaseNotes>
         <copyright>Copyright © 2016 d-fens GmbH</copyright>
         <tags>dfch PowerShell Redmine Client</tags>
