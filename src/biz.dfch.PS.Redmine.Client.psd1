@@ -127,6 +127,38 @@ FileList = @(
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess
 PrivateData = @{
+
+	PSData = @{
+
+        # Tags applied to this module. These help with module discovery in online galleries.
+        Tags = @("dfch", "PowerShell", "Redmine", "Client")
+		
+        # A URL to the license for this module.
+        LicenseUri = 'https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client/blob/master/LICENSE'
+		
+        # A URL to the main website for this project.
+        ProjectUri = 'https://github.com/dfensgmbh/biz.dfch.PS.Redmine.Client.git'
+		
+        # A URL to an icon representing this module.
+        IconUri = 'https://raw.githubusercontent.com/dfensgmbh/biz.dfch.PS.Redmine.Client/master/logo-32x32.png'
+		
+        # ReleaseNotes of this module
+        ReleaseNotes = '20160717
+Features
+
+* updated redmine-net-api library to 4.5.1 (instead of 4.5) after upgrade of biz.dfch.CS.Redmine.Client to .NET 4.6 (from 4.5)
+	* this is a breaking change as the namespace in redmine 4.5.1 changed (especially `Exceptions`)
+* to fix an SSL security issue in the redmine-api.1.0.4 this module uses an updated biz.dfch.CS.Redmine.Client library that works around this issue
+	* therefore we have a breaking change (from a SemVer perspective)
+	* now the SecurityProtocol can be set by [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12 from PowerShell
+
+Bugfixes
+
+* added missing reference to redmine 4.5.1 assembly in PSD1
+'
+
+    }
+
 	"MODULEVAR" = "biz_dfch_PS_Redmine_Client"
 }
 
