@@ -1,76 +1,176 @@
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$sut = (Split-Path -Leaf $MyInvocation.MyCommand.Path).Replace(".Tests.", ".")
-
-function Stop-Pester($message = "EMERGENCY: Script cannot continue.")
-{
-	$msg = $message;
-	$e = New-CustomErrorRecord -msg $msg -cat OperationStopped -o $msg;
-	$PSCmdlet.ThrowTerminatingError($e);
-}
-
-Describe -Tags "Enter-Server.Tests" "Enter-Server.Tests" {
-
-	Mock Export-ModuleMember { return $null; }
-
-	Context "Enter-Server-Succeeds" {
-	
-		# Context wide constants
-		
-		BeforeEach {
-			# N/A
-		}
-
-		It "Warmup" -Test {
-			1 | Should Be 1;
-		}
-	
-		It "Sut-Exists" -Test {
-		
-			Test-Path -Path $sut | Should Be $true;
-		}
-		
-		It "Enter-Server-WithApiKey-Succeeds" -Test {
-		
-			[Uri] $ServerBaseUri = 'https://rhel7-t6-01.tenant6.local'
-			[string] $BaseUrl = "/"
-
-			$username = "arbitrary-username";
-			$password = "arbitrary-password" | ConvertTo-SecureString -AsPlainText -Force;
-			$Credential = New-Object System.Management.Automation.PSCredential($username, $password);
-
-			$TotalAttempts = 2
-			$BaseRetryIntervallMilliseconds = 50
-			
-			$result = Enter-Server $ServerBaseUri $BaseUrl -Credential $Credential -TotalAttempts $TotalAttempts -BaseRetryIntervallMilliseconds $BaseRetryIntervallMilliseconds;
-			
-			$result | Should Not Be $null;
-			$client -is [biz.dfch.CS.Redmine.Client.RedmineClient] | Should Be $true;
-		}
-	}
-
-}
-
 #
+# Module manifest for module 'net.Brainspore.PS.Redmine.Client'
+#
+
+@{
+
+# Script module or binary module file associated with this manifest.
+RootModule = 'net.Brainspore.PS.Redmine.Client.psm1'
+
+# Version number of this module.
+ModuleVersion = '0.0.1.20172607'
+
+# ID used to uniquely identify this module
+GUID = 'e8dd47ee-ba22-4bd7-87a3-b4e86e6e369f'
+
+# Author of this module
+Author = 'Jacob Carrell'
+
+# Company or vendor of this module
+CompanyName = 'Brainspore Networks'
+
+# Copyright statement for this module
+Copyright = '(c) 2017 Brainspore Netowkrs Distributed under Apache 2.0 license.'
+
+# Description of the functionality provided by this module
+Description = 'PowerShell module for Redmine Project Management'
+
+# Minimum version of the Windows PowerShell engine required by this module
+PowerShellVersion = '3.0'
+
+# Name of the Windows PowerShell host required by this module
+# PowerShellHostName = ''
+
+# Minimum version of the Windows PowerShell host required by this module
+# PowerShellHostVersion = ''
+
+# Minimum version of the .NET Framework required by this module
+DotNetFrameworkVersion = '3.5'
+
+# Minimum version of the common language runtime (CLR) required by this module
+# CLRVersion = ''
+
+# Processor architecture (None, X86, Amd64) required by this module
+# ProcessorArchitecture = ''
+
+# Script files (.ps1) that are run in the caller's environment prior to importing this module.
+ScriptsToProcess = @(
+	'Import-Module.ps1'
+)
+
+# ModuleToProcess = @()
+
+# Type files (.ps1xml) to be loaded when importing this module
+# TypesToProcess = @()
+
+# Format files (.ps1xml) to be loaded when importing this module
+# FormatsToProcess = @()
+
+# Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
+NestedModules = @(
+	'Enter-Server.ps1'
+)
+
+# Functions to export from this module
+FunctionsToExport = '*'
+
+# Cmdlets to export from this module
+CmdletsToExport = '*'
+
+# Variables to export from this module
+VariablesToExport = '*'
+
+# Aliases to export from this module
+AliasesToExport = '*'
+
+# List of all modules packaged with this module.
+# ModuleList = @()
+
+# List of all files packaged with this module
+FileList = @(
+	'LICENSE'
+	,
+	'NOTICE'
+	,
+	'README.md'
+	,
+	'net.Brainspore.CS.Redmine.Client.dll'
+	,
+	'net.Brainspore.PS.Redmine.Client.xml'
+	,
+	'Import-Module.ps1'
+	,
+	'redmine-net45-api.dll'
+	,
+	'redmine-net45-api.xml'
+	,
+	'net.Brainspore.CS.System.Utilities.dll'
+	,
+	'Newtonsoft.Json.dll'
+	,
+	'Newtonsoft.Json.xml'
+	,
+	'log4net.dll'
+	,
+	'log4net.xml'
+)
+
+# Private data to pass to the module specified in RootModule/ModuleToProcess
+PrivateData = @{
+
+	PSData = @{
+
+        # Tags applied to this module. These help with module discovery in online galleries.
+        Tags = 'dfch', 'PowerShell', 'Redmine', 'Client'
+		
+        # A URL to the license for this module.
+        LicenseUri = 'https://github.com/dfensgmbh/net.Brainspore.PS.Redmine.Client/blob/master/LICENSE'
+		
+        # A URL to the main website for this project.
+        ProjectUri = 'https://github.com/dfensgmbh/net.Brainspore.PS.Redmine.Client.git'
+		
+        # A URL to an icon representing this module.
+        IconUri = 'https://raw.githubusercontent.com/dfensgmbh/net.Brainspore.PS.Redmine.Client/master/logo-32x32.png'
+		
+        # ReleaseNotes of this module
+        ReleaseNotes = '20160717
+Features
+
+* updated redmine-net-api library to 4.5.1 (instead of 4.5) after upgrade of net.Brainspore.CS.Redmine.Client to .NET 4.6 (from 4.5)
+	* this is a breaking change as the namespace in redmine 4.5.1 changed (especially `Exceptions`)
+* to fix an SSL security issue in the redmine-api.1.0.4 this module uses an updated net.Brainspore.CS.Redmine.Client library that works around this issue
+	* therefore we have a breaking change (from a SemVer perspective)
+	* now the SecurityProtocol can be set by [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12 from PowerShell
+
+Bugfixes
+
+* added missing reference to redmine 4.5.1 assembly in PSD1
+'
+
+    }
+
+	"MODULEVAR" = "biz_dfch_PS_Redmine_Client"
+}
+
+# HelpInfo URI of this module
+HelpInfoURI = 'http://dfch.biz/biz/dfch/PS/Redmine/Client/'
+
+# Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
+DefaultCommandPrefix = 'Redmine'
+
+}
+
+# 
 # Copyright 2016 d-fens GmbH
-#
+# 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-#
+# 
 # http://www.apache.org/licenses/LICENSE-2.0
-#
+# 
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+# 
 
 # SIG # Begin signature block
 # MIIXDwYJKoZIhvcNAQcCoIIXADCCFvwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUFfcCQjf4Pvmjgl6BGVFTco/3
-# olCgghHCMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUy9BVIIHOpTqrcyiYdoLUJfWM
+# +K6gghHCMIIEFDCCAvygAwIBAgILBAAAAAABL07hUtcwDQYJKoZIhvcNAQEFBQAw
 # VzELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExEDAOBgNV
 # BAsTB1Jvb3QgQ0ExGzAZBgNVBAMTEkdsb2JhbFNpZ24gUm9vdCBDQTAeFw0xMTA0
 # MTMxMDAwMDBaFw0yODAxMjgxMjAwMDBaMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
@@ -169,26 +269,26 @@ Describe -Tags "Enter-Server.Tests" "Enter-Server.Tests" {
 # MDAuBgNVBAMTJ0dsb2JhbFNpZ24gQ29kZVNpZ25pbmcgQ0EgLSBTSEEyNTYgLSBH
 # MgISESENFrJbjBGW0/5XyYYR5rrZMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3AgEM
 # MQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQB
-# gjcCAQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBSF589Agn4jjNvv
-# Uxlph0bUPU2wNDANBgkqhkiG9w0BAQEFAASCAQDAbuIAPC6lFOe63GSBlPlIr2dn
-# VYr8JCJtWnLOaOHqaswMx4h6znvez0ZCGPBpO3Gn1+lD06ksVWCSODGMbEDGq6uW
-# cDJGJpcvbAYYKfDr0JlJ6dQWGtR4EmdJf0jcEaTorK/WZiDJb7lIzTK2JsxPqTR7
-# zdiCDRhjHCuuzs+BxM4FqezVYOaDjHFjfwLqm9OULUvq7QDWE4VKBMBFP8rAAcz7
-# q2tNm/GMY8Sgygs9iK/RZdgn9bomlaM1HGknLCiktqj1LKA5BfhiQUw6h2N3ZhMW
-# E8NtZciCeXfkTa4N7Ds2Z9F0tAiwPO/nxdhViGjaSXVqwB1qu83gDHkgPSAzoYIC
+# gjcCAQsxDjAMBgorBgEEAYI3AgEVMCMGCSqGSIb3DQEJBDEWBBRurRqZnCuGhBD/
+# tLTdbEXw6eoM7zANBgkqhkiG9w0BAQEFAASCAQDBfYycnhtbTsm1o4D300IhIRL5
+# 9dz1eC9mWOYIm42HmkXVdNJjY0VIkx9QUxIfQ2GWyNkgmr6fg0GCT1CzidCQf1QL
+# c9zp25PRJa/vAeCLGyqvmQpUppSLRSC7eH5B5kHFJmQ3w8IrmRvGhYzwiiZiSsfX
+# ztElebJ/CvwrpxLTNUGROncpd/gEfPZGBZhH6jWD9AJXJNgoXJecLHuCRshswzkm
+# xkldWF3CmFgD/mqaj/TJpxAcoZqKCFbNs87cB6Jj3gVnru54pdNAdKp+gu0u6WZz
+# zDyKFS9imTr3PjWu3r5cJ+h1Ijv1b2KYoPZ4+lzLgB3ToML0dHrupfmdiM/6oYIC
 # ojCCAp4GCSqGSIb3DQEJBjGCAo8wggKLAgEBMGgwUjELMAkGA1UEBhMCQkUxGTAX
 # BgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gVGlt
 # ZXN0YW1waW5nIENBIC0gRzICEhEh1pmnZJc+8fhCfukZzFNBFDAJBgUrDgMCGgUA
 # oIH9MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE2
-# MDcxNzA3MzQwNFowIwYJKoZIhvcNAQkEMRYEFHiQnqyaTOUnlDrcWXYCZWTrYoDI
+# MDcxNzA3MzQwM1owIwYJKoZIhvcNAQkEMRYEFGKYhzzxkLrM5UmJimTqtP3nE/Jf
 # MIGdBgsqhkiG9w0BCRACDDGBjTCBijCBhzCBhAQUY7gvq2H1g5CWlQULACScUCkz
 # 7HkwbDBWpFQwUjELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYt
 # c2ExKDAmBgNVBAMTH0dsb2JhbFNpZ24gVGltZXN0YW1waW5nIENBIC0gRzICEhEh
-# 1pmnZJc+8fhCfukZzFNBFDANBgkqhkiG9w0BAQEFAASCAQA9ZuqoChiR5n4DomD8
-# R2va5EtNV8ca4HKY06ZnJWQea5a2+y142cjSwpCt9E4uTGp+FwJBev/hWM5gEQS0
-# kL1mulcZD8md89NguYVeNveK+SGMJHnILyxwpp81bwfGMSbn+dbSHjGWuCmOs3Z/
-# hO0Yz3YAhjELCKx2rtcQy58LhIHxtiOOQ2QCeRlRn86pU2iXhXc18tvVa+ppWI1i
-# M6KCRiHRpr1LK/V+h/0nHVrtMS4jY3PvUn8eBS7ZcVa9GzZ/LOyh78tBgrZcd3ZV
-# Jd9KgGKc4T8te9VpNxjosozvEB3V+ctfV/B6J6WvP4cgWjFkW8+LeM9ErwUjRawp
-# 8Xbp
+# 1pmnZJc+8fhCfukZzFNBFDANBgkqhkiG9w0BAQEFAASCAQADKHoPSfVYBUEDqMml
+# eoduOa+0pyeKB0UcxHrCjyIw1ndck2kBwzbPIu9EQlIbGQfZf0nUqtuFX/prSR/I
+# rwHpNfQjlnAgMdKHf1/vi+pHSo0JHQACd7hldNIZspscu6J+CtF5xQ26hgrk2m9s
+# rFTNHIoh33X4oAE6GguYFljTjD7kWPGmKNwT2B6zSnmYcGTspVyb3f4ZYMNsgTNc
+# u45EYzkTtzkUhVBtzDW3+c+FWwlL7HOPhz6UCGnZphiC0d/gNh9ep1Ni+Hhbkta4
+# wjW5yCV3vVuI3Ieri8RQIY6kiPKZYXUdxysTQvj1tXWktNwpAXHHRs5SirwP0wNE
+# pWQ0
 # SIG # End signature block
